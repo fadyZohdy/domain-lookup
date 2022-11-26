@@ -22,8 +22,7 @@ router.get("/health", (req: Request, res: Response) => {
 });
 
 router.get("/history", async (req: Request, res: Response) => {
-  const clientIP = req.header("x-forwarded-for") || req.socket.remoteAddress;
-  const queries = await QueryDAL.latest(clientIP);
+  const queries = await QueryDAL.latest();
   res.json(queries);
 });
 

@@ -37,7 +37,7 @@ export default Query.init(
               })
             )
           ) {
-            throw new Error("Ips should be an array of string");
+            throw new Error("Ips should be a non-empty array of string");
           }
         },
       },

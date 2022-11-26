@@ -1,34 +1,12 @@
-import express, { Express } from "express";
 import dotenv from "dotenv";
-import promMid from "express-prometheus-middleware";
-import morgan from "morgan";
 
 import sequelize from "./db/models";
-import { router } from "./routes";
-import Logger from "./lib/logger";
+import Logger from "./utils/logger";
+import createApp from "./utils/server";
 
 dotenv.config();
 
-const app: Express = express();
-const port = process.env.PORT;
-
-app.use(express.json());
-
-// prometheus exporter
-app.use(
-  promMid({
-    metricsPath: "/metrics",
-    collectDefaultMetrics: true,
-    requestDurationBuckets: [0.1, 0.5, 1, 1.5],
-    requestLengthBuckets: [512, 1024, 5120, 10240, 51200, 102400],
-    responseLengthBuckets: [512, 1024, 5120, 10240, 51200, 102400],
-  })
-);
-
-// logging
-app.use(morgan("combined"));
-
-app.use("/", router);
+const app = createApp();
 
 // make sure database is established otherwise abort.
 sequelize
@@ -41,6 +19,7 @@ sequelize
     process.exit(0);
   });
 
+const port = process.env.PORT || 3000;
 const server = app.listen(port, () => {
   Logger.info(`⚡️[server]: Server is running at https://localhost:${port}`);
 });

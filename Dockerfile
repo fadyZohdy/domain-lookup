@@ -15,6 +15,9 @@ COPY sequelize.config.js ./
 
 COPY src ./src
 
+COPY jest.config.ts ./jest.config.ts
+COPY __tests__ ./__tests__
+
 RUN npm run build
 
 EXPOSE 3000

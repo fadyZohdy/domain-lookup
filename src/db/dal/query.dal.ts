@@ -6,15 +6,19 @@ const create = async (queryObj: Record<string, unknown>): Promise<Model> => {
   return await Query.create(queryObj);
 };
 
-const latest = async (clientIp: string | undefined, limit = 20) => {
+const latest = async (limit = 20) => {
   return await Query.findAll({
-    where: { client_ip: clientIp },
     order: [["createdAt", "desc"]],
     limit,
   });
 };
 
+const truncate = async () => {
+  return await Query.destroy({ truncate: true, cascade: false });
+};
+
 export default {
   create,
   latest,
+  truncate,
 };
