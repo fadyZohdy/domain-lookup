@@ -15,4 +15,6 @@ COPY sequelize.config.js ./
 
 COPY src ./src
 
+RUN npm run build
+
 EXPOSE 3000
