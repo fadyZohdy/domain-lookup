@@ -1,0 +1,121 @@
+basePath: /v1
+definitions:
+  handler.ValidateIPRequest:
+    properties:
+      ip:
+        type: string
+    type: object
+  handler.ValidateIPResponse:
+    properties:
+      status:
+        type: boolean
+    type: object
+  model.Address:
+    properties:
+      ip:
+        type: string
+    type: object
+  model.Query:
+    properties:
+      addresses:
+        items:
+          $ref: '#/definitions/model.Address'
+        type: array
+      client_ip:
+        type: string
+      created_at:
+        type: integer
+      domain:
+        type: string
+    type: object
+  utils.HTTPError:
+    properties:
+      message:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: Implementation for the interview challenge
+  title: Interview challenge
+  version: "1.0"
+paths:
+  /history:
+    get:
+      consumes:
+      - application/json
+      description: List queries
+      operationId: queries_history
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Query'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: List queries
+      tags:
+      - history
+  /tools/lookup:
+    get:
+      consumes:
+      - application/json
+      description: Lookup domain and return all IPv4 addresses
+      operationId: lookup_domain
+      parameters:
+      - description: Domain name
+        in: query
+        name: domain
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Query'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Lookup domain
+      tags:
+      - tools
+  /tools/validate:
+    post:
+      consumes:
+      - application/json
+      description: Simple IP valication
+      operationId: validate_ip
+      parameters:
+      - description: IP to validate
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.ValidateIPRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ValidateIPResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Simple IP validation
+      tags:
+      - tools
+swagger: "2.0"

@@ -1,0 +1,32 @@
+version: "3.7"
+services:
+  mysql:
+    container_name: mysql
+    image: mysql
+    restart: on-failure:1
+    ports:
+      - 3306:3306
+    env_file: .env
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_DATABASE}
+  app-run-migrations:
+    container_name: app-run-migrations
+    build: .
+    env_file: .env
+    command: ./wait-for-it.sh mysql:3306 -- npx sequelize-cli db:migrate
+    depends_on:
+      - mysql
+  app:
+    container_name: app
+    restart: on-failure:3
+    build: .
+    env_file: .env
+    ports:
+      - 3000:3000
+    external_links:
+      - mysql
+    depends_on:
+      - mysql
+      - app-run-migrations
+    command: ./wait-for-it.sh mysql:3306 -- npm run start
