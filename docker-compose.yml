@@ -10,6 +10,12 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
       - MYSQL_DATABASE=${DB_DATABASE}
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 5s
+      interval: 5s
+      retries: 10
+      start_period: 5s
   app-run-migrations:
     container_name: app-run-migrations
     build: .
@@ -37,4 +43,10 @@ services:
     depends_on:
       - mysql
       - app-run-migrations
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 5s
+      timeout: 1s
+      retries: 5
+      start_period: 10s
     command: ./wait-for-it.sh mysql:3306 -- npm run start
